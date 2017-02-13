@@ -10,7 +10,7 @@ import numpy as np
 import pygame as pg
 import random
 from settings import *
-from sprites import *
+from sprites import Player, bullet, field, Platform
 
 #starting the game
 class Game:
@@ -26,6 +26,12 @@ class Game:
     def new(self):
         self.all_sprites = pg.sprite.Group()
 #        self.player = Player(self)
+        self.player = Player()
+        self.all_sprites.add(self.player)
+#        for plat in PLATFORM_LIST:
+#            p = Platform(*plat)
+#            self.all_sprites.add(p)
+#            self.platforms.add(p)     
         self.run
     
     
@@ -37,12 +43,11 @@ class Game:
             self.events()
             self.update()
             self.draw()
-    
-    def shoot(self):
-        self.bullet = bullet(self)
-        cur = pg.mouse.get_pos()
-        diff = cur - self.player.pos
-        self.bullet.move = diff * BULLET_SPEED
+               
+
+    def shoot(self, cursor):
+        b = bullet(self.player, cursor)
+        self.all_sprites.add(b)
     
     def gravity(self):
         self.gravity = gravity(self)
@@ -50,9 +55,24 @@ class Game:
         self.force = g * (BULLMASS * GRAV_MASS)//diff2
     
     def update(self):
+#        self.rect.midbottom = self.pos
+#        if self.vel.y > 0:
+#            hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+#            if hits:
+#                self.pos.y = hits[0].rect.top
+#                self.vel.y = 0
         self.all_sprites.update()
     
-    def events(self): 
+    def events(self):
+        mouse = pg.mouse.get_pressed()
+        if mouse[0]:
+            cur = pg.mouse.get_pos()
+            self.shoot(cur)
+#        keys = pg.key.get_pressed()
+#        if keys[g.K_h]:
+#            cur = pg.mouse.get_pos()
+#            self.shoot(cur)
+            
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
@@ -66,15 +86,15 @@ class Game:
     
     
     
-    def show_start_screen(self):
-        pass
-    def show_go_screen(self):
-        pass
+#    def show_start_screen(self):
+#        pass
+#    def show_go_screen(self):
+#        pass
 
 g = Game()
-g.show_start_screen
+#g.show_start_screen
 while g.running:
     g.new()
-    g.show_go_screen()
+#    g.show_go_screen()
 
 pg.quit()
