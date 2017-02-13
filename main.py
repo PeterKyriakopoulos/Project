@@ -70,7 +70,8 @@ class Game:
     def events(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_h]:
-            self.shoot()
+            cur = pg.mouse.get_pos()
+            self.shoot(cur)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
