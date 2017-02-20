@@ -19,8 +19,8 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.pos = vec(self.rect.center)
         self.vel = vec(0, 0)
-        
-        
+
+
     def jump(self):
     # jump only if standing on a platform
         self.rect.x += 1
@@ -29,10 +29,10 @@ class Player(pg.sprite.Sprite):
         self.rect.x -= 1
         if hits:
             self.vel.y = -20
-    
+
     def update(self):
         self.acc = vec(0, PLAYER_GRAV)
-        keys = pg.KEYDOWN()
+        keys = pg.key.get_pressed()
         if keys[pg.K_a]:
             self.vel.x = -10
         if keys[pg.K_d]:
@@ -46,7 +46,7 @@ class Player(pg.sprite.Sprite):
 
         self.pos += self.vel
         self.rect.midbottom = self.pos
-        
+
 
 class bullet(pg.sprite.Sprite):
     def __init__(self, player, cursor):
@@ -56,10 +56,10 @@ class bullet(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mass = BULLMASS
         self.pos = vec(player.pos)
-        self.vel = cursor
+        self.vel = 0.05*(cursor - player.pos)
         self.rect.center = self.pos
 
-#figuring out how to remove bullets from sprite list to optimize memory usage/performance    
+#figuring out how to remove bullets from sprite list to optimize memory usage/performance
     def update(self):
 #        if self.pos.x > 1610:
 #            pass
@@ -71,8 +71,8 @@ class bullet(pg.sprite.Sprite):
 #            pass
         self.pos += self.vel
         self.rect.midbottom = self.pos
-        
-#also need to figure out collision detection between bullets and different bodies    
+
+#also need to figure out collision detection between bullets and different bodies
 class field(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
