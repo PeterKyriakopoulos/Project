@@ -24,6 +24,7 @@ class Game:
         self.running = True
 
     def new(self):
+        # start a new game
         self.all_sprites = pg.sprite.Group()
 #        self.player = Player(self)
         self.player = Player()
@@ -33,6 +34,7 @@ class Game:
 #            self.all_sprites.add(p)
 #            self.platforms.add(p)
         # self.run
+
 
 
     def run(self):
