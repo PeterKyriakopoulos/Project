@@ -2,80 +2,93 @@
 """
 Created on Sun Feb 12 17:30:44 2017
 
-@author: PET3RtheGreat
+@author: Peter Kyriakopoulos
 """
 
+''' Imports '''
 import pygame as pg
 from settings import *
 vec = pg.math.Vector2
 
+''' Creating the player class '''
 class Player(pg.sprite.Sprite):
     def __init__(self):
-#        super().__init__()
         pg.sprite.Sprite.__init__(self)
-#        or maybe append?
+        ''' Player visual reresentation '''
         self.image = pg.Surface((30, 50))
         self.image.fill(YELLOW)
+        ''' Player position '''
         self.rect = self.image.get_rect()
         self.pos = vec(self.rect.center)
+        ''' Player velocity and acceleration '''
         self.vel = vec(0, 0)
         self.acc = vec(0, PLAYER_GRAV)
-        self.fall = True
-
-
+        
+    ''' Giving the player the ability to jump '''      
     def jump(self):
     # jump only if standing on a platform
+#        self.rect.y += 1
 #        false means the sprite is not deleted upon collision
-        self.vel.y = -20
+#        hits = pg.sprite.spritecollide(self, Platform, False)
+#        self.rect.y -= 1
+#        if hits:
+            self.vel.y = -20
 
+
+    '''calculate position w/ collisions'''    
     def get_position(self, obstacles):
-        """Calculate the player's position this frame, including collisions."""
-        keys = pg.key.get_pressed()
-        if keys[pg.K_a]:
-            self.vel.x = -10
-        elif keys[pg.K_d]:
-            self.vel.x = 10
-        elif keys[pg.K_w]:
-            print('jump')
-            self.jump()
+#        keys = pg.key.get_pressed()
+        ''' check if buttons are pressed '''
+        for event in pg.event.get():
+            ''' player moves while key is pressed, not once pressed '''
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_a:
+                    self.vel.x = -10
+                elif event.key == pg.K_d:
+                    self.vel.x = 10
+                elif event.key == pg.K_w:
+                    self.jump()
         else:
+            ''' if no key is pressed player doesnt move '''
             self.vel.x = 0
             self.vel.y = 0
+        ''' prevent player from going off screen '''
         if self.pos.x > WIDTH - 55:
             self.pos.x = WIDTH - 55
         if self.pos.x < 55:
             self.pos.x = 55
         if self.pos.y > HEIGHT - 65:
-            self.pos.y = HEIGHT - 65
+            self.pos.x = HEIGHT - 65
         if self.pos.y < 65:
             self.pos.y = 65
-
+        ''' x position changed by velocity, y position takes acceleration into account '''
         self.pos.x += self.vel.x
         self.pos.y += self.acc.y + self.vel.y
         self.rect.center = self.pos
+        
+        ''' check if player stands on a platform '''
         if not self.fall:
             self.check_falling(obstacles)
         else:
-            self.fall = self.check_collisions((0,self.vel.y), 1, obstacles)
+            self.fall = self.check_collisions((0, self.vel.y), 1, obstacles)
         if self.vel.x:
-            self.check_collisions((self.vel.x,0), 0, obstacles)
-
+            self.check_collisions((self.vel.x, 0), 0, obstacles)
+        
     def check_falling(self, obstacles):
-        """If player is not contacting the ground, enter fall state."""
-        self.rect.move_ip((0,1))
+        ''' Fall if not on ground '''
+        self.rect.move_ip((0, 1))
         collisions = pg.sprite.spritecollide(self, obstacles, False)
         collidable = pg.sprite.collide_mask
         if not pg.sprite.spritecollideany(self, collisions, collidable):
             self.fall = True
-        self.rect.move_ip((0,-1))
-
+        self.rect.move_ip((0, -1))
+    
     def check_collisions(self, offset, index, obstacles):
-        """
-        This function checks if a collision would occur after moving offset
-        pixels.  If a collision is detected position is decremented by one
-        pixel and retested. This continues until we find exactly how far we can
-        safely move, or we decide we can't move.
-        """
+
+        ''' Checking if collision occurs after moving offset pixels. If yes
+        repeat after reducing by one pixel until the exact distance that
+        can be moved is found '''
+
         unaltered = True
         self.rect.move_ip(offset)
         collisions = pg.sprite.spritecollide(self, obstacles, False)
@@ -84,25 +97,28 @@ class Player(pg.sprite.Sprite):
             self.rect[index] += (1 if offset[index]<0 else -1)
             unaltered = False
         return unaltered
-
-
+    ''' update position of player '''
     def update(self, obstacles):
         self.get_position(obstacles)
 
-
+''' creating a new class for bullets '''
 class bullet(pg.sprite.Sprite):
     def __init__(self, player, cursor):
         pg.sprite.Sprite.__init__(self)
+        ''' visual representation of bullets '''
         self.image = pg.Surface((4, 4))
         self.image.fill(PURPLE)
+        ''' bullet properties '''
         self.rect = self.image.get_rect()
         self.mass = BULLMASS
         self.pos = vec(player.pos)
         self.vel = 0.05*(cursor - player.pos)
         self.rect.center = self.pos
-
-#figuring out how to remove bullets from sprite list to optimize memory usage/performance
-    def update(self, platforms):
+        self.rect.center = (100, 100)
+#figure out how to remove bullets from sprite list to optimize memory usage/performance    
+    
+    ''' update bullet position '''
+    def update(self):
 #        if self.pos.x > 1610:
 #            pass
 #        if self.pos.x < -10:
@@ -113,8 +129,9 @@ class bullet(pg.sprite.Sprite):
 #            pass
         self.pos += self.vel
         self.rect.midbottom = self.pos
+        
+#also need to figure out collision detection between bullets and different bodies    
 
-#also need to figure out collision detection between bullets and different bodies
 class field(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
@@ -124,10 +141,11 @@ class field(pg.sprite.Sprite):
         self.mass = GRAV_MASS
         self.pos = self.rect.center
 
-
+''' new class for platforms '''
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):
         pg.sprite.Sprite.__init__(self)
+        ''' visual representation of sprites, width and height as defined in settings '''
         self.image = pg.Surface((w, h))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
