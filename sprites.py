@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb 12 17:30:44 2017
+Created on Fri Mar  3 19:21:18 2017
 
 @author: PET3RtheGreat
 """
@@ -33,13 +33,21 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.acc = vec(0, PLAYER_GRAV)
+#        for event in pg.event.get():
+#            if event.type == pg.KEYDOWN:
+#                if event.key == pg.K_a:
+#                    self.vel.x = -10
+#                elif event.key == pg.K_d:
+#                    self.vel.x = 10
+#                elif event.key == pg.K_w:
+#                    self.jump()
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
             self.vel.x = -10
         if keys[pg.K_d]:
             self.vel.x = 10
-        if keys[pg.K_w]:
-            self.jump()
+#        if keys[pg.K_w]:
+#            self.jump()
         if self.pos.x > WIDTH - 55:
             self.pos.x = WIDTH - 55
         if self.pos.x < 55:
@@ -66,16 +74,31 @@ class bullet(pg.sprite.Sprite):
         self.pos += self.vel
         self.rect.midbottom = self.pos
 
+
 #also need to figure out collision detection between bullets and different bodies
-class field(pg.sprite.Sprite):
-    def __init__(self):
+class Field(pg.sprite.Sprite):
+    def __init__(self, x, y, w, h):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.draw.circle((10))
+        self.image = pg.Surface((w, h))
         self.image.fill(CYAN)
         self.rect = self.image.get_rect()
         self.mass = GRAV_MASS
         self.pos = self.rect.center
+        print ("running")
+    
+    def update(self, bullet):
+        self.force = g * (BULLMASS * GRAV_MASS)//(bullet.pos - self.pos)
+        bullet.pos = bullet.pos*self.force
 
+
+'''
+
+BLACK HOLES 
+Add new sprite group
+add in PLayer update(?)
+add whole thing in blackhole.update
+
+'''
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):
