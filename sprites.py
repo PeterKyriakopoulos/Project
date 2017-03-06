@@ -41,6 +41,8 @@ class Player(pg.sprite.Sprite):
 #                    self.vel.x = 10
 #                elif event.key == pg.K_w:
 #                    self.jump()
+#            else:
+#                self.vel.x = 0
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
             self.vel.x = -10
@@ -69,9 +71,11 @@ class bullet(pg.sprite.Sprite):
         self.rect.center = self.pos
 
 #figuring out how to remove bullets from sprite list to optimize memory usage/performance
-    def update(self):
-
-        self.pos += self.vel
+    def update(self, blackholes):
+        # ****** Check what needs to be passed in (i.e. field sprite group) *****
+        force = total_black_hole_force(self.pos, blackholes)
+        self.pos = self.pos*force + self.vel
+        # self.pos += self.vel
         self.rect.midbottom = self.pos
 
 
@@ -79,21 +83,30 @@ class bullet(pg.sprite.Sprite):
 class Field(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((w, h))
+        self.image = pg.Surface((x, y, w, h))
+        pg.draw.circle(self.image, CYAN, (x, y), w, 0)
         self.image.fill(CYAN)
-        self.rect = self.image.get_rect()
+        # self.rect = self.image.get_rect()
         self.mass = GRAV_MASS
         self.pos = self.rect.center
         print ("running")
-    
-    def update(self, bullet):
-        self.force = g * (BULLMASS * GRAV_MASS)//(bullet.pos - self.pos)
-        bullet.pos = bullet.pos*self.force
 
+    # def update(self, bullet):
+    #     self.force = g * (BULLMASS * GRAV_MASS)//(bullet.pos - self.pos)
+    #     bullet.pos = bullet.pos*self.force
+
+
+def total_black_hole_force(bull_pos,blackholes):
+    force = vec(0,0)
+    # ******* Check how to loop over a sprite group here *******
+    for hole in blackholes:
+        # **** Check vector maths is working the way you want ******
+        force += g * (BULLMASS * GRAV_MASS)//(bull_pos - hole.pos)
+    return force
 
 '''
 
-BLACK HOLES 
+BLACK HOLES
 Add new sprite group
 add in PLayer update(?)
 add whole thing in blackhole.update
