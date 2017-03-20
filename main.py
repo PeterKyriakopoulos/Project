@@ -27,6 +27,7 @@ class Game:
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.field_sprites = pg.sprite.Group()
+        self.all_bullets = pg.sprite.Group()
         self.player = Player()
         self.field = Field(500, 500, 30, 30)
         self.all_sprites.add(self.player)
@@ -53,7 +54,7 @@ class Game:
 
     def shoot(self, cursor):
         b = bullet(self.player, cursor)
-        self.all_sprites.add(b)
+        self.all_bullets.add(b)
 
 
 
@@ -65,7 +66,8 @@ class Game:
 #                self.pos.y = hits[0].rect.top
 #                self.vel.y = 0
         self.all_sprites.update()
-        self.field_sprites.update(bullet)
+        self.all_bullets.update(self.field_sprites)
+        # self.field_sprites.update(bullet)
 
     def events(self):
         mouse = pg.mouse.get_pressed()

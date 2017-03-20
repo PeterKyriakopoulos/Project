@@ -71,9 +71,14 @@ class bullet(pg.sprite.Sprite):
         self.rect.center = self.pos
 
 #figuring out how to remove bullets from sprite list to optimize memory usage/performance
-    def update(self, field):
+    def update(self, blackholes):
 #        check what needs to be passed in (ie. field sprite group)
         force = black_hole_force(self.pos, blackholes)
+        '''
+        Check the vel, pos and force can be used in the calculation below, or
+        if they all need converting to float before, then back to int
+        '''
+        print(self.vel, self.pos, force)
         self.pos = self.pos * force + self.vel
         self.rect.midbottom = self.pos
 
@@ -93,15 +98,19 @@ class Field(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((w, h))
         self.image.fill(CYAN)
-        self.rect = self.image.get_rect()
-        self.pos = self.rect.center
+        # self.rect = self.image.get_rect()
+        self.rect = vec(x,y)
 
-    def black_hole_force(bullet, field):
-        force = vec(0, 0)
+def black_hole_force(bullet_pos, blackholes):
+    force = vec(0.0, 0.0)
 #        check how to loop over a sprite group here
-        for hole in blackholes:
-            force += g * (BULLMASS * GRAV_MASS)//(bullet.pos - field.pos)
-        return force
+    for hole in blackholes:
+        const = g * (BULLMASS * GRAV_MASS)
+        r = (bullet_pos - hole.rect)
+        df_x= float(const)/r.x
+        df_y= float(const)/r.y
+        force += vec(df_x, df_y)
+    return force
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):
