@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov  7 20:46:21 2016
+Created on Fri Mar  3 19:22:59 2017
 
-@author: Peter Kyriakopoulos
+@author: PET3RtheGreat
 """
+
 WIDTH = 800
 HEIGHT = 600
 FPS = 60

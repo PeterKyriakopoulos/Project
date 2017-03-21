@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb 12 17:18:15 2017
+Created on Fri Mar  3 19:22:23 2017
 
 @author: PET3RtheGreat
 """
@@ -10,7 +10,7 @@ import numpy as np
 import pygame as pg
 import random
 from settings import *
-from sprites import Player, bullet, field, Platform
+from sprites import Player, bullet, Field, Platform
 
 #starting the game
 class Game:
@@ -26,9 +26,14 @@ class Game:
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
-#        self.player = Player(self)
+        self.field_sprites = pg.sprite.Group()
+        self.all_bullets = pg.sprite.Group()
         self.player = Player()
+        self.field = Field(500, 500, 30, 30)
         self.all_sprites.add(self.player)
+        self.field_sprites.add(self.field)
+
+
 #        for plat in PLATFORM_LIST:
 #            p = Platform(*plat)
 #            self.all_sprites.add(p)
@@ -49,12 +54,9 @@ class Game:
 
     def shoot(self, cursor):
         b = bullet(self.player, cursor)
-        self.all_sprites.add(b)
+        self.all_bullets.add(b)
 
-    def gravity(self):
-        self.gravity = gravity(self)
-        diff2 = np.abs(self.bullet.pos - self.field.pos)
-        self.force = g * (BULLMASS * GRAV_MASS)//diff2
+
 
     def update(self):
 #        self.rect.midbottom = self.pos
@@ -64,6 +66,8 @@ class Game:
 #                self.pos.y = hits[0].rect.top
 #                self.vel.y = 0
         self.all_sprites.update()
+        self.all_bullets.update(self.field_sprites)
+        # self.field_sprites.update(bullet)
 
     def events(self):
         mouse = pg.mouse.get_pressed()
@@ -85,6 +89,7 @@ class Game:
     def draw(self):
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.field_sprites.draw(self.screen)
         pg.display.flip()
 
 
