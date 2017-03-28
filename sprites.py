@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar  3 19:21:18 2017
+Created on Tue Mar 21 20:45:35 2017
 
 @author: PET3RtheGreat
 """
 
 import pygame as pg
+import numpy as np
 from settings import *
 vec = pg.math.Vector2
 
@@ -55,8 +56,12 @@ class Player(pg.sprite.Sprite):
         if self.pos.x < 55:
             self.pos.x = 55
 
-        self.pos += self.vel
-        self.rect.midbottom = self.pos
+#        self.pos += self.vel
+        self.pos.x += self.vel.x
+        self.pos.y += self.vel.y
+#        self.rect.midbottom = self.pos
+        self.rect.x = self.pos.x
+        self.rect.y = self.pos.y
 
 
 class bullet(pg.sprite.Sprite):
@@ -68,8 +73,11 @@ class bullet(pg.sprite.Sprite):
         self.mass = BULLMASS
         self.pos = vec(player.pos)
         self.vel = 0.05*(cursor - player.pos)
-        self.rect.center = self.pos
-
+#        self.rect.center = self.pos
+        self.rect.x = self.pos.x
+        self.rect.y = self.pos.y
+        self.pos = np.array([self.pos.x, self.pos.y])
+        
 #figuring out how to remove bullets from sprite list to optimize memory usage/performance
     def update(self, blackholes):
 #        check what needs to be passed in (ie. field sprite group)
@@ -80,7 +88,10 @@ class bullet(pg.sprite.Sprite):
         '''
         print(self.vel, self.pos, force)
         self.pos = self.pos * force + self.vel
-        self.rect.midbottom = self.pos
+#        self.pos.x = self.pos.x * force + self.vel
+#        self.pos.y = self.pos.y * force + self.vel
+#        self.rect.midbottom = self.pos
+        '''getting the following error: float() argument must be a string or a number, not 'pygame.math.Vector2'''
 
 #also need to figure out collision detection between bullets and different bodies
 #class Field(pg.sprite.Sprite):
@@ -107,8 +118,8 @@ def black_hole_force(bullet_pos, blackholes):
     for hole in blackholes:
         const = g * (BULLMASS * GRAV_MASS)
         r = (bullet_pos - hole.rect)
-        df_x= float(const)/r.x
-        df_y= float(const)/r.y
+        df_x= float(const)/(r.x)
+        df_y= float(const)/(r.y)
         force += vec(df_x, df_y)
     return force
 
