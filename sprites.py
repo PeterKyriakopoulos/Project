@@ -76,8 +76,8 @@ class bullet(pg.sprite.Sprite):
 #        self.rect.center = self.pos
         self.rect.x = self.pos.x
         self.rect.y = self.pos.y
-        self.pos = np.array([self.pos.x, self.pos.y])
-        
+        #  self.pos = np.array([self.pos.x, self.pos.y])
+
 #figuring out how to remove bullets from sprite list to optimize memory usage/performance
     def update(self, blackholes):
 #        check what needs to be passed in (ie. field sprite group)
@@ -86,10 +86,13 @@ class bullet(pg.sprite.Sprite):
         Check the vel, pos and force can be used in the calculation below, or
         if they all need converting to float before, then back to int
         '''
+        # self.pos = vec(float(self.pos.x), float(self.pos.y))
         print(self.vel, self.pos, force)
-        self.pos = self.pos * force + self.vel
-#        self.pos.x = self.pos.x * force + self.vel
-#        self.pos.y = self.pos.y * force + self.vel
+        self.pos += force*(1./FPS**2.) + self.vel*(1./FPS)
+        self.rect.x = self.pos.x
+        self.rect.y = self.pos.y
+        # self.pos.x = 0.5*force.x + self.vel.x
+        # self.pos.y = 0.5*force.y + self.vel.y
 #        self.rect.midbottom = self.pos
         '''getting the following error: float() argument must be a string or a number, not 'pygame.math.Vector2'''
 
@@ -118,8 +121,8 @@ def black_hole_force(bullet_pos, blackholes):
     for hole in blackholes:
         const = g * (BULLMASS * GRAV_MASS)
         r = (bullet_pos - hole.rect)
-        df_x= float(const)/(r.x)
-        df_y= float(const)/(r.y)
+        df_x= float(const)/(r[0])
+        df_y= float(const)/(r[1])
         force += vec(df_x, df_y)
     return force
 
