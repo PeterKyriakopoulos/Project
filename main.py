@@ -90,6 +90,7 @@ class Game:
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         self.field_sprites.draw(self.screen)
+        self.all_bullets.draw(self.screen)
         pg.display.flip()
 
 
