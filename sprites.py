@@ -86,7 +86,14 @@ class bullet(pg.sprite.Sprite):
         '''
         # self.pos = vec(float(self.pos.x), float(self.pos.y))
         print(self.vel, self.pos, force)
-        self.pos += -10*force*(1./FPS**2.) + 1*self.vel*(1./FPS)
+
+
+        # self.pos += force*(1./FPS**2.) + self.vel*(1./FPS)
+        self.vel += force*(1./FPS)
+        self.pos += self.vel*(1./FPS)
+
+        #self.pos += -10*force*(1./FPS**2.) + 1*self.vel*(1./FPS)
+
         self.rect.x = self.pos.x
         self.rect.y = self.pos.y
         # self.pos.x = 0.5*force.x + self.vel.x
