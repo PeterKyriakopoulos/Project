@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
 """
 Created on Tue Mar 21 20:45:47 2017
-
 @author: PET3RtheGreat
 """
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1600
+HEIGHT = 900
 FPS = 60
 
 TITLE = "Platform Demo v2."
@@ -21,8 +19,8 @@ BULLET_LIFETIME = 2000
 BULLET_RATE = 150
 BULLMASS = 1
 
-GRAV_MASS = 50000
-g = 1
+GRAV_MASS = 5000
+g = 1000
 
 
 PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 40),

@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 """
 Created on Tue Mar 21 20:45:16 2017
-
 @author: PET3RtheGreat
 """
 
@@ -28,6 +26,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.field_sprites = pg.sprite.Group()
         self.all_bullets = pg.sprite.Group()
+        self.platforms = pg.sprite.Group()
         self.player = Player()
         self.field = Field(500, 500, 30, 30)
         self.all_sprites.add(self.player)
@@ -37,7 +36,7 @@ class Game:
 #        for plat in PLATFORM_LIST:
 #            p = Platform(*plat)
 #            self.all_sprites.add(p)
-#            self.platforms.add(p)
+#            self.platform.add(p)
         # self.run
 
 

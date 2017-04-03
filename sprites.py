@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 """
 Created on Tue Mar 21 20:45:35 2017
-
 @author: PET3RtheGreat
 """
 
@@ -72,7 +70,7 @@ class bullet(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mass = BULLMASS
         self.pos = vec(player.pos)
-        self.vel = 0.05*(cursor - player.pos)
+        self.vel = .75*(cursor - player.pos)
 #        self.rect.center = self.pos
         self.rect.x = self.pos.x
         self.rect.y = self.pos.y
@@ -89,9 +87,13 @@ class bullet(pg.sprite.Sprite):
         # self.pos = vec(float(self.pos.x), float(self.pos.y))
         print(self.vel, self.pos, force)
 
+
         # self.pos += force*(1./FPS**2.) + self.vel*(1./FPS)
         self.vel += force*(1./FPS)
         self.pos += self.vel*(1./FPS)
+
+        #self.pos += -10*force*(1./FPS**2.) + 1*self.vel*(1./FPS)
+
         self.rect.x = self.pos.x
         self.rect.y = self.pos.y
         # self.pos.x = 0.5*force.x + self.vel.x
@@ -124,9 +126,12 @@ def black_hole_force(bullet_pos, blackholes):
     for hole in blackholes:
         const = g * (BULLMASS * GRAV_MASS)
         r = (bullet_pos - hole.rect)
-        df_x= float(const)/(r[0])
-        df_y= float(const)/(r[1])
-        force += vec(df_x, df_y)
+#        f_x= float(const)/((r[0])**2)
+#        f_y= float(const)/((r[1])**2)
+#        force += vec(f_x, f_y)
+        dx = np.linalg.norm(r)
+        f = (const/dx**2)*(r/dx)
+        force += f
     return force
 
 class Platform(pg.sprite.Sprite):
