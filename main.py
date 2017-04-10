@@ -8,9 +8,10 @@ import numpy as np
 import pygame as pg
 import random
 from settings import *
-from sprites import Player, bullet, Field, Platform
+from sprites import Player, bullet, Field, Platform, Villain
 
 #starting the game
+background = pg.image.load("darkspace.jpg")
 class Game:
     def __init__(self):
 #        game window
@@ -26,10 +27,12 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.field_sprites = pg.sprite.Group()
         self.all_bullets = pg.sprite.Group()
+        self.all_villain = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.player = Player()
-        self.field = Field(500, 500, 30, 30)
-        self.all_sprites.add(self.player)
+        self.villain = Villain()
+        self.field = Field(500, 500, 50, 50)
+        self.all_sprites.add(self.player, self.villain)
         self.field_sprites.add(self.field)
 
 
@@ -76,7 +79,7 @@ class Game:
         keys = pg.key.get_pressed()
         if keys[pg.K_h]:
            cur = pg.mouse.get_pos()
-           print(cur)
+#           print(cur)
            self.shoot(cur)
 
         for event in pg.event.get():
@@ -86,9 +89,10 @@ class Game:
                 self.running = False
 
     def draw(self):
-        self.screen.fill(BLACK)
+        self.screen.blit(background, (0,0))
         self.all_sprites.draw(self.screen)
         self.field_sprites.draw(self.screen)
+        self.all_villain.draw(self.screen)
         self.all_bullets.draw(self.screen)
         pg.display.flip()
 
